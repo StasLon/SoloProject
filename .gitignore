@@ -11,6 +11,7 @@ Miscellaneous
 migrate_working_dir/
 *.env
 desktop.ini
+**/desktop.ini
 IntelliJ related
 *.iml
 *.ipr
