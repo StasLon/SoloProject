@@ -10,7 +10,7 @@ Miscellaneous
 .svn/
 migrate_working_dir/
 *.env
-
+desktop.ini
 IntelliJ related
 *.iml
 *.ipr
