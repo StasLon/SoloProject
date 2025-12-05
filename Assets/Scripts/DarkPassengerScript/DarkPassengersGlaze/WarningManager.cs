@@ -12,6 +12,7 @@ public class WarningManager : MonoBehaviour
     {
         warningOverlaySpript.FadeIn();
         warningTextSpawnerScript.StartSpawning();
+        Debug.Log("TriggerWarning");
     }
 
     public void SwopWarning()

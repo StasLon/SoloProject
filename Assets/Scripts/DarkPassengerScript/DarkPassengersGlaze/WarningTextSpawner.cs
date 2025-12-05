@@ -9,7 +9,7 @@ public class WarningTextSpawner : MonoBehaviour
     [SerializeField] private Canvas canvas;
     [SerializeField] private float spawnInterval = 0.3f;
     [SerializeField] private float textLifetime = 1f;
-    [SerializeField] private List<string> warningWords = new List<string> { "—“–¿’", "—ÃŒ“–»", "¡≈√»", "ŒÕ «ƒ≈—‹", "Õ≈ —Ã≈…", "“≈ÃÕŒ“¿" };
+    [SerializeField] private List<string> warningWords = new List<string> {};
     [SerializeField] private List<GameObject> spawnedTexts = new List<GameObject>();
 
     private bool isSpawning = false;
@@ -25,6 +25,7 @@ public class WarningTextSpawner : MonoBehaviour
     public void StopSpawning()
     {
         isSpawning = false;
+        ClearAllTexts();
     }
 
     private IEnumerator SpawnLoop()
@@ -77,7 +78,11 @@ public class WarningTextSpawner : MonoBehaviour
         yield return new WaitForSeconds(lifetime);
 
         // Destroy
-        Destroy(text.gameObject);
+        if (text != null)
+        {
+            Destroy(text.gameObject);
+        }
+        
         
     }
 
