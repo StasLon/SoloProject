@@ -161,4 +161,3 @@ Assets/Plugins/**       linguist-vendored
 
 # Exceptions for .asset files such as lightning pre-baking
 LightingData.asset     binary
-
