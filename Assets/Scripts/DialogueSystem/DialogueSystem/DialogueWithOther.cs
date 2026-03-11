@@ -2,33 +2,15 @@ using UnityEngine;
 using System.Collections;
 using TMPro;
 
-public class Dialogue : MonoBehaviour
+public class DialogueWithOther : MonoBehaviour
 {
     public TextMeshProUGUI textComponent;
-    [Header("Quest")]
-    [SerializeField] private AnimaTaskController task;
-
-    [Header("Dialogue Sets")]
-    [TextArea(5, 15)]
-    [SerializeField] private string[] dialogue0;
-
-    [TextArea(5, 15)]
-    [SerializeField] private string[] dialogue1;
-
-    [TextArea(5, 15)]
-    [SerializeField] private string[] dialogue2;
-
-    [SerializeField] private AnimaTaskController animaTaskController;
-
-    [TextArea(5, 15)] public string[] lines;
+    [TextArea(3, 10)] public string[] lines;
     public float textSpeed;
 
     [Header("Sound")]
     [SerializeField] private AudioSource typingAudio;
 
-    [Header("Animation")]
-    [SerializeField] private Animator characterAnimator;
-    [SerializeField] private float maxTalkingDistance = 5f;
     private Transform player;
 
     [SerializeField] private FirstPersonController playerMovement;
@@ -74,52 +56,21 @@ public class Dialogue : MonoBehaviour
 
     public void StartDialogue()
     {
-        if (animaTaskController != null && animaTaskController.IsAnimaMoving())
-            return;
-
-        if (task.GetDialogueStep() == 0);
-        if (task.GetDialogueStep() == 1);
-        if (task.GetDialogueStep() == 2); 
-
         if (player == null) return;
 
-        // ==== Костыли игрока/интерактов ====
-        characterAnimator.SetBool("Talking", true);
+        // ==== Блокируем игрока и интеракты ====
         playerMovement.enabled = false;
         interactElement1.SetActive(false);
         interactElement2.SetActive(false);
-        // =================================
-
-        // ==== Поворот персонажа к игроку (только модель) ====
-        Transform model = characterAnimator.transform; // или отдельная ссылка на модель
-        Vector3 lookPos = player.position;
-        lookPos.y = model.position.y; // горизонтальный уровень
-        model.LookAt(lookPos);
-        // ====================================================
-        // ==== Выбор диалога по счётчику ====
-        if (animaTaskController != null)
-        {
-            int step = animaTaskController.GetDialogueStep();
-
-            if (step == 0)
-                lines = dialogue0;
-            else if (step == 1)
-                lines = dialogue1;
-            else if (step >= 2)
-                lines = dialogue2;
-        }
+        // =====================================
 
         index = 0;
         isDialogueActive = true;
         gameObject.SetActive(true);
 
-        // ==== Сбрасываем текст на TextMeshPro ====
         textComponent.text = "";
 
-        // ==== Анимация и звук ====
-        TrySetTalking(true);
         typingCoroutine = StartCoroutine(TypeLine());
-        // =======================
 
         LockPlayerControls();
     }
@@ -160,23 +111,17 @@ public class Dialogue : MonoBehaviour
 
     private void EndDialogue()
     {
-        if (animaTaskController != null)
-        {
-            animaTaskController.StartMovingAfterDialogue();
-        }
-
-        // ==== Включаем обратно игрока и интеракты ====
-        characterAnimator.SetBool("Talking", false);
+        // ==== Возвращаем игрока и интеракты ====
         playerMovement.enabled = true;
         interactElement1.SetActive(true);
         interactElement2.SetActive(true);
-        // ==========================================
+        // =====================================
 
         isDialogueActive = false;
         gameObject.SetActive(false);
         textComponent.text = "";
+
         UnlockPlayerControls();
-        TrySetTalking(false);
 
         if (typingAudio != null)
             typingAudio.Stop();
@@ -192,18 +137,5 @@ public class Dialogue : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-    }
-
-    private void TrySetTalking(bool state)
-    {
-        if (characterAnimator == null || player == null)
-            return;
-
-        float distance = Vector3.Distance(player.position, transform.position);
-
-        if (distance <= maxTalkingDistance)
-        {
-            characterAnimator.SetBool("Talking", state);
-        }
     }
 }

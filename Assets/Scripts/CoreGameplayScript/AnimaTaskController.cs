@@ -1,43 +1,53 @@
-using UnityEngine;
+ï»¿using UnityEngine;
+using System.Collections;
 
 public class AnimaTaskController : MonoBehaviour
 {
     [Header("Quest State")]
-    [SerializeField] private bool hasTalkedToAnima;   // Ïåðâûé ðàçãîâîð
-    [SerializeField] private bool letterCollected;    // Ïèñüìî ïîäîáðàíî
-
+    [SerializeField] private bool hasTalkedToAnima;
+    [SerializeField] private bool letterCollected;
+    [SerializeField] private int dialogueCounter = 0;
     private bool storyContinued;
 
-    // ===== Âûçûâàåòñÿ èç ïåðâîãî äèàëîãà =====
-    public void TalkedToAnima()
-    {
-        if (hasTalkedToAnima)
-            return;
+    [Header("Anima Movement")]
+    [SerializeField] private Transform anima;          
+    [SerializeField] private Transform animaTarget;    
+    [SerializeField] private float moveSpeed = 2f;
+    [SerializeField] private Animator animaAnimator;
 
-        hasTalkedToAnima = true;
-        Debug.Log("Èãðîê ïîãîâîðèë ñ Àíèìîé è ïîëó÷èë çàäàíèå.");
+    private bool isMoving = false;
+
+    [Header("Dialogue Control")]
+    private bool canTalk = true; 
+
+    private void Start()
+    {
+        if (anima == null)
+            anima = this.transform;
     }
 
-    // ===== Âûçûâàåòñÿ ïðè íàæàòèè E íà ïèñüìî =====
+    
+    public void TalkedToAnima()
+    {
+        if (hasTalkedToAnima) return;
+        hasTalkedToAnima = true;
+        Debug.Log("Ð˜Ð³Ñ€Ð¾Ðº Ð¿Ð¾Ð³Ð¾Ð²Ð¾Ñ€Ð¸Ð» Ñ ÐÐ½Ð¸Ð¼Ð¾Ð¹ Ð¸ Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ð» Ð·Ð°Ð´Ð°Ð½Ð¸Ðµ.");
+    }
+
+    
     public void CollectLetter()
     {
-        if (letterCollected)
-            return;
-
+        if (letterCollected) return;
         letterCollected = true;
-        Debug.Log("Èãðîê ïîäîáðàë ïèñüìî.");
-
+        Debug.Log("Ð˜Ð³Ñ€Ð¾Ðº Ð¿Ð¾Ð´Ð¾Ð±Ñ€Ð°Ð» Ð¿Ð¸ÑÑŒÐ¼Ð¾.");
         CheckStoryProgress();
     }
 
-    // ===== Ïðîâåðêà óñëîâèé =====
+    
     private void CheckStoryProgress()
     {
-        if (storyContinued)
-            return;
-
-        if (!hasTalkedToAnima)
-            return;
+        if (storyContinued) return;
+        if (!hasTalkedToAnima) return;
 
         if (letterCollected)
         {
@@ -45,20 +55,106 @@ public class AnimaTaskController : MonoBehaviour
         }
     }
 
-    // ===== Ïðîäâèæåíèå ñþæåòà =====
+    
     private void ContinueStory()
     {
         storyContinued = true;
-
-        Debug.Log("Ïèñüìî íàéäåíî. Àíèìà ìåíÿåò ïîçèöèþ è äèàëîã. Ñþæåò èä¸ò äàëüøå.");
-
-        // Òóò ïîçæå:
-        // - ñìåíà ïîçèöèè Àíèìû
-        // - íîâûé äèàëîã
-        // - ñèãíàë â StoryManager
+        Debug.Log("ÐŸÐ¸ÑÑŒÐ¼Ð¾ Ð½Ð°Ð¹Ð´ÐµÐ½Ð¾. Ð¡ÑŽÐ¶ÐµÑ‚ Ð¸Ð´Ñ‘Ñ‚ Ð´Ð°Ð»ÑŒÑˆÐµ.");
+        
     }
 
-    // ===== Äëÿ äèàëîãîâîé ñèñòåìû =====
-    public bool HasTalkedToAnima() => hasTalkedToAnima;
-    public bool HasLetter() => letterCollected;
+   
+    public void StartAnimaMove()
+    {
+        if (isMoving) return;
+
+        isMoving = true;
+        canTalk = false; 
+        animaAnimator.SetBool("isWalking", true);
+        StartCoroutine(MoveAnimaToPoint());
+    }
+
+    private IEnumerator MoveAnimaToPoint()
+    {
+        while (Vector3.Distance(anima.position, animaTarget.position) > 0.1f)
+        {
+            
+            Vector3 direction = (animaTarget.position - anima.position).normalized;
+            direction.y = 0f; 
+
+            
+            if (direction != Vector3.zero)
+            {
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                anima.rotation = Quaternion.Slerp(
+                    anima.rotation,
+                    lookRotation,
+                    5f * Time.deltaTime
+                );
+            }
+
+            
+            anima.position = Vector3.MoveTowards(
+                anima.position,
+                animaTarget.position,
+                moveSpeed * Time.deltaTime
+            );
+
+            yield return null;
+        }
+
+        
+        anima.position = animaTarget.position;
+        animaAnimator.SetBool("isWalking", false);
+        isMoving = false;
+
+        
+        anima.rotation = Quaternion.Euler(0f, -177.566f, 0f);
+
+        canTalk = true; 
+        Debug.Log("ÐÐ½Ð¸Ð¼Ð° Ð´Ð¾ÑˆÐ»Ð° Ð´Ð¾ Ñ‚Ð¾Ñ‡ÐºÐ¸ Ð¸ Ð³Ð¾Ñ‚Ð¾Ð²Ð° Ðº Ð´Ð¸Ð°Ð»Ð¾Ð³Ñƒ.");
+    }
+
+    
+    public void AddFromAnima()
+    {
+        if (dialogueCounter == 0)
+        {
+            dialogueCounter = 1;
+            Debug.Log("ÐÐ½Ð¸Ð¼Ð°: Ð¿ÐµÑ€ÐµÑ…Ð¾Ð´ Ð½Ð° Ð´Ð¸Ð°Ð»Ð¾Ð³ 1");
+            TalkedToAnima();
+            
+        }
+    }
+
+    public void StartMovingAfterDialogue()
+    {
+        if (dialogueCounter == 1 && !isMoving)
+        {
+            StartAnimaMove();
+        }
+    }
+
+    public void AddFromLetter()
+    {
+        if (dialogueCounter == 1)
+        {
+            dialogueCounter = 2;
+            Debug.Log("ÐŸÐ¸ÑÑŒÐ¼Ð¾ Ð½Ð°Ð¹Ð´ÐµÐ½Ð¾: Ð¿ÐµÑ€ÐµÑ…Ð¾Ð´ Ð½Ð° Ñ„Ð¸Ð½Ð°Ð»ÑŒÐ½Ñ‹Ð¹ Ð´Ð¸Ð°Ð»Ð¾Ð³");
+            CollectLetter();
+        }
+        else
+        {
+            Debug.Log("ÐŸÐ¸ÑÑŒÐ¼Ð¾ Ð½ÐµÐ»ÑŒÐ·Ñ Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÑŒ ÑÐµÐ¹Ñ‡Ð°Ñ");
+        }
+    }
+
+    public bool HasTalkedToAnima()
+    {
+        return hasTalkedToAnima;
+    }
+
+    public int GetDialogueStep() => dialogueCounter;
+    public bool IsAnimaMoving() => isMoving;
+    public bool CanTalk() => canTalk;
 }

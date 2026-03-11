@@ -1,8 +1,9 @@
 using UnityEngine;
 
-public class ItemInspectInteract : MonoBehaviour, IInteractable
+public class ItemInteractNotQuestble : MonoBehaviour, IInteractable
 {
-    [SerializeField] private InspectSystem inspectSysScript;
+    [SerializeField] public InspectSystem inspectSysScript;
+    
     string IInteractable.GetDescription()
     {
         return "Осмотреть";

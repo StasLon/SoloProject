@@ -109,11 +109,10 @@ public class InspectSystem : MonoBehaviour
         {
             Vector3 delta = Input.mousePosition - previousMousePosition;
 
-            float rotX = delta.y * rotationSpeed * Time.deltaTime;
             float rotY = -delta.x * rotationSpeed * Time.deltaTime;
 
+            // Вращаем ТОЛЬКО влево-вправо
             currentObject.Rotate(Vector3.up, rotY, Space.World);
-            currentObject.Rotate(Vector3.right, rotX, Space.World);
 
             previousMousePosition = Input.mousePosition;
         }

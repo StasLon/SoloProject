@@ -6,7 +6,7 @@ namespace DoorScript
 	[RequireComponent(typeof(AudioSource))]
 
 
-	public class DialogueDoor : MonoBehaviour, IInteractable
+	public class AnimasDealogueDoor : MonoBehaviour, IInteractable
 	{
 		public bool open;
 		public float smooth = 1.0f;
@@ -15,9 +15,9 @@ namespace DoorScript
 		public AudioSource asource;
 		public AudioClip openDoor, closeDoor;
 
-		[SerializeField] DialogueWithOther dialogueScript;
-		private bool hasStartedDialogue = false;
-		// Use this for initialization
+		[SerializeField] AnimaTaskController animaControl;
+		
+		
 		void Start()
 		{
 			asource = GetComponent<AudioSource>();
@@ -49,18 +49,23 @@ namespace DoorScript
 
 		public void Interact()
 		{
-			OpenDoor();
-
-			if (!hasStartedDialogue && dialogueScript != null)
-			{
-				dialogueScript.StartDialogue();
-				hasStartedDialogue = true;
-			}
+            if (animaControl.HasTalkedToAnima())
+            {
+				OpenDoor();
+            }
 		}
 
 		public string GetDescription()
 		{
-			return "Открыть";
+			if (animaControl.HasTalkedToAnima())
+			{
+				return "Открыть";
+			}
+            else
+            {
+				return "Закрыто";
+            }
+			
 		}
 	}
 }
