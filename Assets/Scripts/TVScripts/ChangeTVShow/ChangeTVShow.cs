@@ -15,7 +15,6 @@ public class ChangeTVShow : MonoBehaviour
 
         if (videoPlayer == null)
         {
-            Debug.LogError("На объекте нет VideoPlayer! Добавь компонент.");
             return;
         }
 

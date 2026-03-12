@@ -17,13 +17,11 @@ namespace DoorScript
 
 		[SerializeField] DialogueWithOther dialogueScript;
 		private bool hasStartedDialogue = false;
-		// Use this for initialization
 		void Start()
 		{
 			asource = GetComponent<AudioSource>();
 		}
 
-		// Update is called once per frame
 		void Update()
 		{
 			if (open)

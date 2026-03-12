@@ -13,5 +13,4 @@ public class KartinaDialogue : MonoBehaviour, IInteractable
         dialogueScript.StartDialogue();
     }
 
-    
 }

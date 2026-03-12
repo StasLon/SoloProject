@@ -35,17 +35,17 @@ public class DarkPassengerManager : MonoBehaviour
         Vector3 randomOffset = new Vector3(Random.Range(-2f, 2f), 0f, Random.Range(-2f, 2f));
         Vector3 desiredXZ = player.position + offset + randomOffset;
 
-        // Ищем точку НА СЛОЕ GROUND
+       
         Vector3? groundPoint = FindGroundPoint(desiredXZ);
 
         if (!groundPoint.HasValue)
         {
             Debug.LogWarning("Телепорт ОТМЕНЁН! Под ногами нет слоя Ground!");
-            SetRandomCoolDown(); // всё равно ждём кулдаун, чтобы не спамило
+            SetRandomCoolDown(); 
             return;
         }
 
-        // ФИНАЛЬНАЯ ПОЗИЦИЯ — Y жёстко фиксирован -0.85
+        
         Vector3 finalPos = new Vector3(groundPoint.Value.x, -1.002f, groundPoint.Value.z);
 
         passengerScript.transform.position = finalPos;
@@ -55,21 +55,18 @@ public class DarkPassengerManager : MonoBehaviour
         SetRandomCoolDown();
     }
 
-    // Возвращает точку на земле или null, если земли нет
+    
     private Vector3? FindGroundPoint(Vector3 desiredXZ)
     {
-        // ВАЖНО: слой именно "Ground" (регистр важен!)
         int groundLayer = LayerMask.GetMask("Ground");
 
-        // Луч строго вниз с большой высоты
         Ray ray = new Ray(desiredXZ + Vector3.up * 15f, Vector3.down);
 
         if (Physics.Raycast(ray, out RaycastHit hit, 30f, groundLayer))
         {
-            return hit.point; // нашли землю → возвращаем X и Z
+            return hit.point; 
         }
 
-        // Ничего не нашли
         return null;
     }
     private void SetRandomCoolDown()

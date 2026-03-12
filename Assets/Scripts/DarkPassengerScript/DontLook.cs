@@ -49,7 +49,6 @@ public class DontLook : MonoBehaviour
         Vector3 forward = playerHead.forward.normalized;
         float angle = Vector3.Angle(forward, dir);
 
-        // --- Kill: Raycast без стен ---
         Ray ray = new Ray(playerHead.position, forward);
         RaycastHit hit;
         bool hitPassenger = false;
@@ -59,7 +58,6 @@ public class DontLook : MonoBehaviour
             if (hit.transform == passenger)
                 hitPassenger = true;
 
-            // Стена только блокирует Kill, Warning будет ниже
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Walls"))
                 hitPassenger = false;
         }
@@ -67,14 +65,11 @@ public class DontLook : MonoBehaviour
         if (hitPassenger && angle <= killAngleThreshold)
             return LookLevel.Kill;
 
-        // --- Warning: угол + проверка стены ---
         if (angle <= warningAngleThreshold)
         {
-            // Луч от игрока к пассажиру
             Ray warningRay = new Ray(playerHead.position, dir);
             if (!Physics.Raycast(warningRay, distance, LayerMask.GetMask("Walls")))
             {
-                // Нет стены — возвращаем Warning
                 return LookLevel.Warning;
             }
         }

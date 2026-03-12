@@ -58,11 +58,9 @@ public class DialogueWithOther : MonoBehaviour
     {
         if (player == null) return;
 
-        // ==== Блокируем игрока и интеракты ====
         playerMovement.enabled = false;
         interactElement1.SetActive(false);
         interactElement2.SetActive(false);
-        // =====================================
 
         index = 0;
         isDialogueActive = true;
@@ -111,11 +109,9 @@ public class DialogueWithOther : MonoBehaviour
 
     private void EndDialogue()
     {
-        // ==== Возвращаем игрока и интеракты ====
         playerMovement.enabled = true;
         interactElement1.SetActive(true);
         interactElement2.SetActive(true);
-        // =====================================
 
         isDialogueActive = false;
         gameObject.SetActive(false);

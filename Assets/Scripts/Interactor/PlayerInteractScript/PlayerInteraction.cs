@@ -9,7 +9,6 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] public float interactionDistance = 2f;
     [SerializeField] TextMeshProUGUI interactionText;
 
-
     private void Update()
     {
         InteractionRay();
@@ -36,6 +35,5 @@ public class PlayerInteraction : MonoBehaviour
             }
 
             InteractionUI.SetActive(hitSomething);
-
     }
 }

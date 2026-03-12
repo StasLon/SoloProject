@@ -52,11 +52,4 @@ public class PrologueText : MonoBehaviour
         dialogueText.text = "";
     }
 
-
-
-
-
-
-
-
 }

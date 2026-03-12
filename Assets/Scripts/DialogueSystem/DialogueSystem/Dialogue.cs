@@ -83,20 +83,16 @@ public class Dialogue : MonoBehaviour
 
         if (player == null) return;
 
-        // ==== Костыли игрока/интерактов ====
         characterAnimator.SetBool("Talking", true);
         playerMovement.enabled = false;
         interactElement1.SetActive(false);
         interactElement2.SetActive(false);
-        // =================================
 
-        // ==== Поворот персонажа к игроку (только модель) ====
-        Transform model = characterAnimator.transform; // или отдельная ссылка на модель
+        Transform model = characterAnimator.transform; 
         Vector3 lookPos = player.position;
-        lookPos.y = model.position.y; // горизонтальный уровень
+        lookPos.y = model.position.y;
         model.LookAt(lookPos);
-        // ====================================================
-        // ==== Выбор диалога по счётчику ====
+
         if (animaTaskController != null)
         {
             int step = animaTaskController.GetDialogueStep();
@@ -113,13 +109,10 @@ public class Dialogue : MonoBehaviour
         isDialogueActive = true;
         gameObject.SetActive(true);
 
-        // ==== Сбрасываем текст на TextMeshPro ====
         textComponent.text = "";
 
-        // ==== Анимация и звук ====
         TrySetTalking(true);
         typingCoroutine = StartCoroutine(TypeLine());
-        // =======================
 
         LockPlayerControls();
     }
@@ -165,12 +158,10 @@ public class Dialogue : MonoBehaviour
             animaTaskController.StartMovingAfterDialogue();
         }
 
-        // ==== Включаем обратно игрока и интеракты ====
         characterAnimator.SetBool("Talking", false);
         playerMovement.enabled = true;
         interactElement1.SetActive(true);
         interactElement2.SetActive(true);
-        // ==========================================
 
         isDialogueActive = false;
         gameObject.SetActive(false);
